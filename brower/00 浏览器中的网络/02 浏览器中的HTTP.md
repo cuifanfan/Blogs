@@ -233,7 +233,7 @@ HTTP/2的二进制分帧还实现了**优先请求**。可以在某些请求的�
 
 参考下面这张图：
 
-![](https://github.com/cuifanfan/Blogs/blob/master/brower/00%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C/images/02-6.png)
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/00%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C/images/02-6.jpg)
 
 从图中可以看出，HTTP/2 添加了一个二进制分帧层，那我们就结合图来分析下 HTTP/2 的请求和接收过程。 
 
@@ -245,7 +245,7 @@ HTTP/2的二进制分帧还实现了**优先请求**。可以在某些请求的�
 - 同样，二进制分帧层会将这些响应数据转换为一个个带有请求 ID 编号的帧，经过协议栈发送给浏览器。 
 - 浏览器接收到响应帧之后，会根据 ID 编号将帧的数据提交给对应的请求
 
-![](https://github.com/cuifanfan/Blogs/blob/master/brower/00%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C/images/02-7.png)
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/00%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C/images/02-7.jpg)
 
 HTTP/2还实现了一些其他的特性，比如**头信息压缩**和**服务器推送**。
 
