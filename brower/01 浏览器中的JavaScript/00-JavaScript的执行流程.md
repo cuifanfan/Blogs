@@ -1,0 +1,565 @@
+# 09 JavScript执行机制
+
+## 1. 原型与原型链
+
+```js
+function Person() {
+    
+}
+const person = new Person()
+person.name = 'cuifanfan'
+console.log(person.name) // cuifanfan
+```
+
+在这个例子中，Person 就是一个构造函数，我们使用 new 创建了一个实例对象 person。
+
+### 1.1 prototype
+
+每个函数都有一个`prototype `属性，就是我们经常在各种例子中看到的那个 `prototype`，它指向了一个对象，这个对象正是调用该构造函数而创建的**实例**的原型。
+
+什么是原型呢？你可以这样理解：每一个JavaScript对象(null除外)在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型"继承"属性。
+
+```js
+function Person() {
+
+}
+
+// prototype是函数才会有的属性
+Person.prototype.name = 'cuifanfan'
+const person1 = new Person()
+const person2 = new Person()
+console.log(person1.name); // cuifanfan
+console.log(person2.name); // cuifanfan 
+```
+
+![](./images/09-1.png)
+
+现在你知道了函数和`prototype`的关系，那new 函数创建出的实例和`prototype`的关系该如何描述呢？所谓的“继承”又是如何实现的呢？这就要关注接下来的这个属性：
+
+### 1.2 ` __proto__`
+
+每一个JavaScript对象(除了 null )都具有的一个属性，叫__proto__，这个属性会指向该对象的原型。
+
+```js
+function Person() {
+
+}
+var person = new Person();
+console.log(person.__proto__ === Person.prototype); // true
+```
+
+于是我们更新下关系图：
+
+![](./images/09-2.png)
+
+既然实例对象和构造函数都可以指向原型，那么原型是否有属性指向构造函数或者实例呢？
+
+### 1.3 constructor
+
+指向实例倒是没有，因为一个构造函数可以生成多个实例，但是原型指向构造函数倒是有的：`constrcutor`。每个原型都有一个`constructor `属性指向关联的构造函数。
+
+```js
+function Person() {}
+console.log(Person === Person.prototype.constructor); // true
+```
+
+所以再更新下关系图：
+
+![](./images/09-3.png)
+
+那么你肯定也有一个疑问，这个属性到底有什么用呢？其实这个属性可以说是一个历史遗留问题，在大部分情况下是没用的，在我的理解里，我认为他有两个作用：
+
+- 让实例对象知道是什么函数构造了它
+- 如果想给某些类库中的构造函数增加一些自定义的方法，就可以通过 `xx.constructor.method` 来扩展
+
+综上我们已经了解了构造函数、实例原型、和实例之间的关系，接下来我们讲讲实例和原型的关系：
+
+### 1.4 实例与原型
+
+当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。
+
+```js
+function Person() {}
+
+Person.prototype.name = 'cuifanfan';
+
+var person = new Person();
+
+person.name = 'simon';
+console.log(person.name) // simon
+
+delete person.name;
+console.log(person.name) // cuifanfan
+```
+
+### 1.5 原型的原型
+
+在前面，我们已经讲了原型也是一个对象，既然是对象，我们就可以用最原始的方式创建它，那就是：
+
+```js
+var obj = new Object();
+obj.name = 'cuifanfan'
+console.log(obj.name) // cuifanfan
+```
+
+其实原型对象就是通过 Object 构造函数生成的，结合之前所讲，实例的 __proto__ 指向构造函数的 prototype ，所以我们再更新下关系图：
+
+![](./images/09-4.png)
+
+### 1.6 原型链
+
+那 Object.prototype 的原型呢？
+
+null，我们可以打印：
+
+```js
+console.log(Object.prototype.__proto__ === null) // true
+```
+
+然而 null 究竟代表了什么呢？
+
+引用阮一峰老师就是：
+
+> null 表示“没有对象”，即该处不应该有值。
+
+所以 Object.prototype.__proto__ 的值为 null 跟 Object.prototype 没有原型，其实表达了一个意思。所以查找属性的时候查到 Object.prototype 就可以停止查找了。
+
+最后一张关系图也可以更新为：
+
+![](./images/09-5.png)
+
+### 1.7 补充说明
+
+#### constructor
+
+当获取 person.constructor 时，其实 person 中并没有 constructor 属性,当不能读取到constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：
+
+```js
+person.constructor === Person.prototype.constructor
+```
+
+#### `__proto__`
+
+其次是 `__proto__` ，绝大部分浏览器都支持这个非标准的方法访问原型，然而它并不存在于 Person.prototype 中，实际上，它是来自于 `Object.prototype `，与其说是一个属性，不如说是一个 getter/setter，当使用` obj.__proto__` 时，可以理解成返回了 `Object.getPrototypeOf(obj)`。
+
+#### 真的是继承吗？
+
+引用《你不知道的JavaScript》中的话，就是：
+
+> 继承意味着复制操作，然而 JavaScript 默认并不会复制对象的属性，相反，JavaScript 只是在两个对象之间创建一个关联，这样，一个对象就可以通过委托访问另一个对象的属性和函数，所以与其叫继承，委托的说法反而更准确些。
+
+#### `Function.__proto__` === Function.prototype?
+
+所有对象都可以通过原型链最终找到 `Object.prototype` ，虽然 `Object.prototype` 也是一个对象，但是这个对象却不是 `Object` 创造的，而是引擎自己创建了 `Object.prototype` 。**所以可以这样说，所有实例都是对象，但是对象不一定都是实例**。
+
+接下来我们来看 `Function.prototype` 这个特殊的对象，如果你在浏览器将这个对象打印出来，会发现这个对象其实是一个函数。
+
+我们知道函数都是通过 `new Function()` 生成的，难道 `Function.prototype` 也是通过 `new Function()` 产生的吗？
+
+**答案也是否定的，这个函数也是引擎自己创建的。首先引擎创建了 `Object.prototype` ，然后创建了 `Function.prototype` ，并且通过 `__proto__` 将两者联系了起来**。
+
+**所以我们又可以得出一个结论，不是所有函数都是 `new Function()` 产生的**。有了 `Function.prototype` 以后才有了 `function Function()` ，然后其他的构造函数都是 `function Function()` 生成的。
+
+现在可以来解释 `Function.__proto__ === Function.prototype` 这个问题了。
+
+个人理解是：其他所有的构造函数都可以通过原型链找到 `Function.prototype` ，并且 `function Function()` 本质也是一个函数，为了不产生混乱就将 `function Function()` 的 `__proto__` 联系到了 `Function.prototype` 上。
+
+最后补充一点：`Function.prototype`是引擎创建出来的，引擎认为不需要给这个对象添加 `prototype` 属性。
+
+总结：
+
+1. 所有对象都可以通过`__proto__`找到`Object.prototype`。
+2. 所有函数都可以通过`__proto__`找到`Function.prototype`。
+3. `Object.prototype`和`Function.prototype`是两个特殊的对象，它们由引擎来创建。
+4. 除了上面两个特殊对象，其余对象都是构造器`new`出来的。
+5. 函数的`prototype`是一个对象，也就是原型。
+6. 对象的`__proto__`指向原型，`__proto__`将对象和原型连接起来组成了原型链。
+
+## 2. 词法作用域和动态作用域
+
+### 2.1 作用域
+
+作用域是指程序源代码中定义变量的区域。
+
+作用域规定了如何查找变量，也就是确定当前执行代码对变量的访问权限。
+
+JavaScript 采用词法作用域(lexical scoping)，也就是静态作用域。
+
+### 2.2 静态作用域与动态作用域
+
+因为 JavaScript 采用的是词法作用域，函数的作用域在函数定义的时候就决定了。
+
+而与词法作用域相对的是动态作用域，函数的作用域是在函数调用的时候才决定的。
+
+```js
+var value = 1;
+
+function foo() {
+    console.log(value);
+}
+
+function bar() {
+    var value = 2;
+    foo();
+}
+
+bar();
+
+// 结果是 ???
+```
+
+前面我们已经说了，JavaScript采用的是静态作用域，所以这个例子的结果是 1。
+
+### 2.3 动态作用域
+
+也许你会好奇什么语言是动态作用域？
+
+bash 就是动态作用域，不信的话，把下面的脚本存成例如 scope.bash，然后进入相应的目录，用命令行执行 `bash ./scope.bash`，看看打印的值是多少。
+
+```bash
+value=1
+function foo () {
+    echo $value;
+}
+function bar () {
+    local value=2;
+    foo;
+}
+bar
+```
+
+### 2.4 思考题
+
+让我们看一个《JavaScript权威指南》中的例子：
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f();
+}
+checkscope();
+```
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
+}
+checkscope()();
+```
+
+猜猜两段代码各自的执行结果是多少？
+
+两段代码都会打印：`local scope`。原因也很简单，因为JavaScript采用的是词法作用域，函数的作用域基于函数创建的位置。
+
+但是在这里真正值得思考的是：
+
+虽然两段代码执行的结果一样，但是两段代码究竟有哪些不同呢？
+
+如果要回答这个问题，就要牵涉到很多的内容，词法作用域只是其中的一小部分，需要你继续向下阅读。
+
+## 3. 变量提升
+
+你觉得下面这段代码输出的结果是什么？
+
+```js
+ showName()
+ console.log(myname)
+
+ var myname = 'cuifanfan'
+
+ function showName() {
+   console.log('函数 showName 被执行');
+ }
+```
+
+实际执行结果却并非顺序执行：
+
+```js
+函数 showName 被执行
+undefined
+```
+
+通过上面的执行结果，你应该已经知道了函数或者变量可以在定义之前使用，那如果使用没有定义的变量或者函数，JavaScript 代码还能继续执行吗?
+
+答案是否定的，JavaScript 引擎会报错。
+
+但同样的方式，变量和函数的处理结果为什么不一样？比如上面的执行结果，提前使用的showName 函数能打印出来完整结果，但是提前使用的 myname 变量值却是undefined。要解释这两个问题，你就需要先了解下什么是变量提升。
+
+**所谓的变量提升，是指在 JavaScript 代码执行过程中，JavaScript 引擎把变量的声明部分和函数的声明部分提升到代码开头的“行为”。变量被提升后，会给变量设置默认值，这个默认值就是我们熟悉的 undefined**。
+
+下面我们来模拟下实现：
+
+```js
+// 声明部分，可以看出，函数变量提升优先级高于变量
+function showName() {
+  console.log('函数 showName 被执行');
+}
+
+var myname = undefined
+
+// 可执行代码部分
+showName()
+console.log(myname)
+myname = 'cuifanfan'
+```
+
+通过这段模拟的变量提升代码，相信你已经明白了可以在定义之前使用变量或者函数的原因——**函数和变量在执行之前都提升到了代码开头**。
+
+### 3.1 JavaScript代码执行流程
+
+从概念的字面意义上来看，“变量提升”意味着变量和函数的声明会在物理层面移动到代码的最前面，正如我们所模拟的那样。但，这并不准确。**实际上变量和函数声明在代码里的位置是不会改变的，而且是在编译阶段被 JavaScript 引擎放入内存中**。
+
+一段JavaScript 代码在执行之前需要被 JavaScript 引擎编译，**编译**完成之后，才会进入**执行**阶段。
+
+### 3.2 编译阶段
+
+大致流程你可以参考下图：
+
+![](./images/09-6.png)
+
+从上图可以看出，输入一段代码，经过编译后，会生成两部分内容：**执行上下文（Execution context）和可执行代码**。
+
+**执行上下文是 JavaScript 执行一段代码时的运行环境**，比如调用一个函数，就会进入这个函数的执行上下文，确定该函数在执行期间用到的诸如 this、变量、对象以及函数等。
+
+在执行上下文中存在一个**变量环境的对象**（Viriable Environment），该对象中保存了变量提升的内容，比如上面代码中的变量myname 和函数 showName，都保存在该对象中。
+
+你可以简单地把变量环境对象看成是如下结构：
+
+```js
+VariableEnvironment:
+  myname -> undefined, 
+  showName ->function : {console.log(myname)
+```
+
+我们可以一行一行来分析上述代码：
+
+> 第 1 行和第 2 行，由于这两行代码不是声明操作，所以 JavaScript 引擎不会做任何处理；
+>
+> 第 3 行，这行是经过 var 声明的，因此 JavaScript 引擎将在环境对象中创建一个名为 myname 的属性，并使用undefined初始化；
+>
+> 第 4 行，JavaScript 引擎发现了一个通过 function 定义的函数，所以它将函数定义存储到堆 (HEAP）中，并在环境对象中创建一个 showName 的属性，然后将该属性值指向堆中函数的位置。
+
+这样就生成了变量环境对象。接下来 JavaScript 引擎会把声明以外的代码编译为字节码，至于字节码的细节，你可以类比如下的模拟代码：
+
+```js
+showName()
+console.log(myname)
+myname = '极客时间'
+```
+
+现在有了执行上下文和可执行代码了，那么接下来就到了执行阶段了。
+
+### 3.3 执行阶段
+
+JavaScript 引擎开始执行“可执行代码”，按照顺序一行一行地执行：
+
+> 1. 当执行到 showName 函数时，JavaScript 引擎便开始在变量环境对象中查找该函数，由于变量环境对象中存在该函数的引用，所以 JavaScript 引擎便开始执行该函数，并输出“函数 showName 被执行”结果。
+>
+> 2. 接下来打印“myname”信息，JavaScript 引擎继续在变量环境对象中查找该对象，由于变量环境存在 myname 变量，并且其值为 undefined，所以这时候就输出undefined。
+>
+> 3. 接下来执行第 3 行，把“cuifanfan”赋给 myname 变量，赋值后变量环境中的myname 属性值改变为“cuifanfan”，变量环境如下所示：
+
+```js
+1 VariableEnvironment:
+2 myname -> " 极客时间 ", 
+3 showName ->function : {console.log(myname)
+```
+
+好了，以上就是一段代码的编译和执行流程。实际上，编译阶段和执行阶段都是非常复杂的，包括了词法分析、语法解析、代码优化、代码生成等，这些内容会在后续介绍。
+
+另外，**一段代码如果定义了两个相同名字的函数，那么最终生效的是最后一个函数**。
+
+## 4. 执行上下文栈
+
+### 4.1 可执行代码
+
+前面我们讲到，当一段代码被执行时，JavaScript 引擎先会对其进行编译，并创建执行上下文。但是并没有明确说明到底什么样的代码才算符合规范。其实很简单，就三种，**全局代码、函数代码、eval代码**。
+
+1. 当 JavaScript 执行全局代码的时候，会编译全局代码并创建全局执行上下文，在整个页面的生存周期内，全局执行上下文只有一份。
+
+2. 当**调用**一个函数的时候，函数体内的代码会被编译，并创建函数执行上下文，一般情况下，函数执行结束之后，创建的函数执行上下文会被销毁。
+
+3. 当使用 eval 函数的时候，eval 的代码也会被编译，并创建执行上下文。
+
+### 4.2 函数调用
+
+```js
+1 var a = 2
+2 function add(){
+3 	var b = 10
+4 	return a+b
+5 }
+6 add()
+```
+
+执行到函数 add() 之前，JavaScript 引擎会为上面这段代码创建**全局执行上下文**，包含了声明的函数和变量。此时还没有创建函数执行上下文，函数只有被调用才会进行编译、创建执行上下文。
+
+![](./images/09-7.png)
+
+执行上下文准备好之后，便开始执行全局代码，当执行到 add 这儿时，JavaScript 判断这是一个函数调用，那么将执行以下操作:
+
+1. 首先，从**全局执行上下文**中，取出 add 函数代码。
+
+2. 其次，对 add 函数的这段代码进行编译，并创建**该函数的执行上下文**和**可执行代码**。
+
+3. 最后，执行代码，输出结果。
+
+### 4.3 调用栈
+
+在调用add函数的时候，我们就有了两个执行上下文，接下来问题来了，我们写的函数多了去了，如何管理创建的那么多执行上下文呢？所以 JavaScript 引擎创建了**执行上下文栈（**Execution context stack，ECS）来管理执行上下文。当执行一个函数的时候，就会创建一个执行上下文，并且压入执行上下文栈，当函数执行完毕的时候，就会将函数的执行上下文从栈中弹出。
+
+好了，现在你应该知道了**调用栈是 JavaScript 引擎追踪函数执行的一个机制**，当一次有多个函数被调用时，通过调用栈就能够追踪到哪个函数正在被执行以及各函数之间的调用关系。
+
+**如何利用浏览器查看调用栈的信息**
+
+你可以打开“开发者工具”，点击“Source”标签，选择 JavaScript 代码的页面，然后在第 3 行加上断点，并刷新页面。你可以看到执行到 add 函数时，执行流程就暂停了，这时可以通过右边“callstack”来查看当前的调用栈的情况，如下图：
+
+![](./images/09-8.png)
+
+你还可以使用 console.trace() 来输出当前的函数调用关系:
+
+![](./images/09-9.png)
+
+现在我们已经了解了执行上下文栈是如何处理执行上下文的,所以让我们看看上节最后的问题：
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f();
+}
+checkscope();
+```
+
+```js
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
+}
+checkscope()();
+```
+
+两段代码执行的结果一样，但是两段代码究竟有哪些不同呢？答案就是执行上下文栈的变化不一样。让我们模拟第一段代码：
+
+```js
+ECStack.push(<checkscope> functionContext);
+ECStack.push(<f> functionContext);
+ECStack.pop();
+ECStack.pop();
+```
+
+```js
+ECStack.push(<checkscope> functionContext);
+ECStack.pop();
+ECStack.push(<f> functionContext);
+ECStack.pop();
+```
+
+## 5. 块级作用域与词法环境
+
+在 ES6 之前，ES 的作用域只有两种：全局作用域和函数作用域。相较而言，其他语言则都普遍支持**块级作用域**。块级作用域就是使用一对大括号包裹的一段代码，比如函数、判断语句、循环语句，甚至单独的一个{}都可以被看作是一个块级作用域。
+
+和 Java、C/C++ 不同，**ES6 之前是不支持块级作用域的**，因为当初设计这门语言的时候，并没有想到 JavaScript 会火起来，所以只是按照最简单的方式来设计。没有了块级作用域，再把作用域内部的变量统一提升无疑是最快速、最简单的设计，不过这也直接导致了函数中的变量无论是在哪里声明的，在编译阶段都会被提取到执行上下文的变量环境中，所以这些变量在整个函数体内部的任何地方都是能被访问的，这也就是 JavaScript 中的变量提升。
+
+### 5.1 变量提升带来的问题
+
+#### 5.1.1 变量容易在不被察觉的情况下被覆盖掉
+
+```js
+var myname = " 极客时间 "
+function showName(){
+  console.log(myname);
+ if(0){
+   var myname = " 极客邦 "
+}
+  console.log(myname);
+} 
+showName()
+```
+
+打印结果为undefined，是不是很奇怪？其实就是变量提升造成的后果。
+
+![](./images/09-10.png)
+
+在函数执行过程中，JavaScript 会优先从当前的执行上下文中查找变量，由于变量提升，当前的执行上下文中就包含了变量 myname，而值是 undefined，所以获取到的 myname 的值就是 undefined。
+
+#### 5.1.2 本应销毁的变量没有及时销毁
+
+```JS
+function foo() {
+  for (var i = 0; i < 7; i++) {}
+  console.log(i);
+}
+foo()
+```
+
+最后打印结果为7，原因就是i没有销毁。这依旧和其他支持块级作用域的语言表现是不一致的，所以必然会给一些人造成误解。
+
+### 5.2 **JavaScript** 是如何支持块级作用域的
+
+为了解决这些问题，**ES6 引入了 let 和const 关键字**，从而使 JavaScript 也能像其他语言一样拥有了块级作用域。不过你是否有过这样的疑问：“在同一段代码中，ES6 是如何做到既要支持变量提升的特性，又要支持块级作用域的呢？”
+
+你已经知道 **JavaScript 引擎是通过变量环境实现函数级作用域的**，那么 ES6 又是如何在函数级作用域的基础之上，实现对块级作用域的支持呢？你可以先看下面这段代码：
+
+```js
+function foo() {
+  var a = 1
+  let b = 2
+  {
+    let b = 3
+    var c = 4
+    let d = 5
+    console.log(a)
+    console.log(b)
+  }
+  console.log(b)
+  console.log(c)
+  console.log(d)
+}
+foo()
+```
+
+**第一步是编译并创建执行上下文**，如图：
+
+![](./images/09-11.png)
+
+通过上图我们可以发现：
+
+> 1. 函数内部通过 var 声明的变量，在编译阶段全都被存放到**变量环境**里面了。
+>
+> 2. 通过 let 声明的变量，在编译阶段会被存放到**词法环境**(Lexical Environment)中
+>
+> 3. 在函数的作用域内部，通过 let 声明的变量并没有被存放到词法环境中。
+
+这里提一下，从第二点看出，let其实也是有变量提升的。只是let声明的变量，在被赋值前不能够访问。这也就是所谓的“暂时性死区”。
+
+接下来，**第二步继续执行代码**，当执行到代码块里面时，变量环境中 a 的值已经被设置成了 1，词法环境中 b 的值已经被设置成了 2，这时候函数的执行上下文就如下图所示：
+
+![](./images/09-12.png)
+
+其实，在词法环境内部，维护了一个**小型栈结构**，栈底是函数最外层的变量，进入一个作用域块后，就会把该作用域块内部的变量压到栈顶；当作用域执行完成之后，该作用域的信息就会从栈顶弹出，这就是词法环境的结构。需要注意下，我这里所讲的变量是指通过 let 或者 const 声明的变量。
+
+当执行到作用域块中的console.log(a)这行代码时，就需要在词法环境和变量环境中查找变量 a 的值了。
+
+具体查找方式是：沿着词法环境的栈顶向下查询，如果在词法环境中的某个块中查找到了，就直接返回给 JavaScript 引擎，如果没有查找到，那么继续在变量环境中查找。
+
+当作用域块执行结束之后，其内部定义的变量就会从词法环境的栈顶弹出，最终执行上下文如下图所示：
+
+![](./images/09-13.png)
+
