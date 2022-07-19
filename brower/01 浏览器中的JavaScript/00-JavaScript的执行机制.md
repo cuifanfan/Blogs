@@ -32,7 +32,7 @@ console.log(person1.name); // cuifanfan
 console.log(person2.name); // cuifanfan 
 ```
 
-![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-1.png)
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-1.png)
 
 现在你知道了函数和`prototype`的关系，那new 函数创建出的实例和`prototype`的关系该如何描述呢？所谓的“继承”又是如何实现的呢？这就要关注接下来的这个属性：
 
@@ -50,7 +50,7 @@ console.log(person.__proto__ === Person.prototype); // true
 
 于是我们更新下关系图：
 
-![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-2.png)
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-2.png)
 
 既然实例对象和构造函数都可以指向原型，那么原型是否有属性指向构造函数或者实例呢？
 
