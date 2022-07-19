@@ -32,7 +32,7 @@ console.log(person1.name); // cuifanfan
 console.log(person2.name); // cuifanfan 
 ```
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-1.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-1.png)
 
 现在你知道了函数和`prototype`的关系，那new 函数创建出的实例和`prototype`的关系该如何描述呢？所谓的“继承”又是如何实现的呢？这就要关注接下来的这个属性：
 
@@ -50,7 +50,7 @@ console.log(person.__proto__ === Person.prototype); // true
 
 于是我们更新下关系图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-2.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-2.png)
 
 既然实例对象和构造函数都可以指向原型，那么原型是否有属性指向构造函数或者实例呢？
 
@@ -65,7 +65,7 @@ console.log(Person === Person.prototype.constructor); // true
 
 所以再更新下关系图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-3.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-3.png)
 
 那么你肯定也有一个疑问，这个属性到底有什么用呢？其实这个属性可以说是一个历史遗留问题，在大部分情况下是没用的，在我的理解里，我认为他有两个作用：
 
@@ -104,7 +104,7 @@ console.log(obj.name) // cuifanfan
 
 其实原型对象就是通过 Object 构造函数生成的，结合之前所讲，实例的 __proto__ 指向构造函数的 prototype ，所以我们再更新下关系图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-4.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-4.png)
 
 ### 1.6 原型链
 
@@ -126,7 +126,7 @@ console.log(Object.prototype.__proto__ === null) // true
 
 最后一张关系图也可以更新为：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-5.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-5.png)
 
 ### 1.7 补充说明
 
@@ -324,7 +324,7 @@ myname = 'cuifanfan'
 
 大致流程你可以参考下图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-6.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-6.png)
 
 从上图可以看出，输入一段代码，经过编译后，会生成两部分内容：**执行上下文（Execution context）和可执行代码**。
 
@@ -403,7 +403,7 @@ JavaScript 引擎开始执行“可执行代码”，按照顺序一行一行地
 
 执行到函数 add() 之前，JavaScript 引擎会为上面这段代码创建**全局执行上下文**，包含了声明的函数和变量。此时还没有创建函数执行上下文，函数只有被调用才会进行编译、创建执行上下文。
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-7.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-7.png)
 
 执行上下文准备好之后，便开始执行全局代码，当执行到 add 这儿时，JavaScript 判断这是一个函数调用，那么将执行以下操作:
 
@@ -423,11 +423,11 @@ JavaScript 引擎开始执行“可执行代码”，按照顺序一行一行地
 
 你可以打开“开发者工具”，点击“Source”标签，选择 JavaScript 代码的页面，然后在第 3 行加上断点，并刷新页面。你可以看到执行到 add 函数时，执行流程就暂停了，这时可以通过右边“callstack”来查看当前的调用栈的情况，如下图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-8.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-8.png)
 
 你还可以使用 console.trace() 来输出当前的函数调用关系:
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-9.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-9.png)
 
 现在我们已经了解了执行上下文栈是如何处理执行上下文的,所以让我们看看上节最后的问题：
 
@@ -495,7 +495,7 @@ showName()
 
 打印结果为undefined，是不是很奇怪？其实就是变量提升造成的后果。
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-10.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-10.png)
 
 在函数执行过程中，JavaScript 会优先从当前的执行上下文中查找变量，由于变量提升，当前的执行上下文中就包含了变量 myname，而值是 undefined，所以获取到的 myname 的值就是 undefined。
 
@@ -537,7 +537,7 @@ foo()
 
 **第一步是编译并创建执行上下文**，如图：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-11.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-11.png)
 
 通过上图我们可以发现：
 
@@ -551,7 +551,7 @@ foo()
 
 接下来，**第二步继续执行代码**，当执行到代码块里面时，变量环境中 a 的值已经被设置成了 1，词法环境中 b 的值已经被设置成了 2，这时候函数的执行上下文就如下图所示：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-12.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-12.png)
 
 其实，在词法环境内部，维护了一个**小型栈结构**，栈底是函数最外层的变量，进入一个作用域块后，就会把该作用域块内部的变量压到栈顶；当作用域执行完成之后，该作用域的信息就会从栈顶弹出，这就是词法环境的结构。需要注意下，我这里所讲的变量是指通过 let 或者 const 声明的变量。
 
@@ -561,7 +561,7 @@ foo()
 
 当作用域块执行结束之后，其内部定义的变量就会从词法环境的栈顶弹出，最终执行上下文如下图所示：
 
-![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-13.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-13.png)
 
 ## 6. 变量对象与活动对象
 
@@ -721,7 +721,7 @@ ECStack = [
 
 前面提到过，对于每个执行上下文，都由四个部分组成：
 
-![](./images/09-14.png)
+![](https://github.com/cuifanfan/Blogs/tree/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-14.png)
 
 执行上下文主要分为三种——全局执行上下文、函数执行上下文和 eval 执行上下文，所以对应的 this 也只有这三种——全局执行上下文中的 this、函数中的 this 和 eval 中的 this。不过由于 eval 我们使用的不多，所以本文我们对此就不做介绍了，如果你感兴趣的话，可以自行搜索和学习相关知识。
 
