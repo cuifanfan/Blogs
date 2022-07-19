@@ -32,7 +32,7 @@ console.log(person1.name); // cuifanfan
 console.log(person2.name); // cuifanfan 
 ```
 
-![](./images/09-1.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-1.png)
 
 现在你知道了函数和`prototype`的关系，那new 函数创建出的实例和`prototype`的关系该如何描述呢？所谓的“继承”又是如何实现的呢？这就要关注接下来的这个属性：
 
@@ -50,7 +50,7 @@ console.log(person.__proto__ === Person.prototype); // true
 
 于是我们更新下关系图：
 
-![](./images/09-2.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-2.png)
 
 既然实例对象和构造函数都可以指向原型，那么原型是否有属性指向构造函数或者实例呢？
 
@@ -65,7 +65,7 @@ console.log(Person === Person.prototype.constructor); // true
 
 所以再更新下关系图：
 
-![](./images/09-3.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-3.png)
 
 那么你肯定也有一个疑问，这个属性到底有什么用呢？其实这个属性可以说是一个历史遗留问题，在大部分情况下是没用的，在我的理解里，我认为他有两个作用：
 
@@ -104,7 +104,7 @@ console.log(obj.name) // cuifanfan
 
 其实原型对象就是通过 Object 构造函数生成的，结合之前所讲，实例的 __proto__ 指向构造函数的 prototype ，所以我们再更新下关系图：
 
-![](./images/09-4.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-4.png)
 
 ### 1.6 原型链
 
@@ -126,7 +126,7 @@ console.log(Object.prototype.__proto__ === null) // true
 
 最后一张关系图也可以更新为：
 
-![](./images/09-5.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-5.png)
 
 ### 1.7 补充说明
 
@@ -320,11 +320,11 @@ myname = 'cuifanfan'
 
 一段JavaScript 代码在执行之前需要被 JavaScript 引擎编译，**编译**完成之后，才会进入**执行**阶段。
 
-### 3.2 编译阶段
+### 3.2 预编译阶段
 
 大致流程你可以参考下图：
 
-![](./images/09-6.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-6.png)
 
 从上图可以看出，输入一段代码，经过编译后，会生成两部分内容：**执行上下文（Execution context）和可执行代码**。
 
@@ -348,7 +348,7 @@ VariableEnvironment:
 >
 > 第 4 行，JavaScript 引擎发现了一个通过 function 定义的函数，所以它将函数定义存储到堆 (HEAP）中，并在环境对象中创建一个 showName 的属性，然后将该属性值指向堆中函数的位置。
 
-这样就生成了变量环境对象。接下来 JavaScript 引擎会把声明以外的代码编译为字节码，至于字节码的细节，你可以类比如下的模拟代码：
+这样就生成了变量环境对象。接下来 JavaScript 引擎会把声明以外的代码**编译为字节码**(之前都是预编译的操作)，至于字节码的细节，你可以类比如下的模拟代码：
 
 ```js
 showName()
@@ -403,7 +403,7 @@ JavaScript 引擎开始执行“可执行代码”，按照顺序一行一行地
 
 执行到函数 add() 之前，JavaScript 引擎会为上面这段代码创建**全局执行上下文**，包含了声明的函数和变量。此时还没有创建函数执行上下文，函数只有被调用才会进行编译、创建执行上下文。
 
-![](./images/09-7.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-7.png)
 
 执行上下文准备好之后，便开始执行全局代码，当执行到 add 这儿时，JavaScript 判断这是一个函数调用，那么将执行以下操作:
 
@@ -423,11 +423,11 @@ JavaScript 引擎开始执行“可执行代码”，按照顺序一行一行地
 
 你可以打开“开发者工具”，点击“Source”标签，选择 JavaScript 代码的页面，然后在第 3 行加上断点，并刷新页面。你可以看到执行到 add 函数时，执行流程就暂停了，这时可以通过右边“callstack”来查看当前的调用栈的情况，如下图：
 
-![](./images/09-8.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-8.png)
 
 你还可以使用 console.trace() 来输出当前的函数调用关系:
 
-![](./images/09-9.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-9.png)
 
 现在我们已经了解了执行上下文栈是如何处理执行上下文的,所以让我们看看上节最后的问题：
 
@@ -495,7 +495,7 @@ showName()
 
 打印结果为undefined，是不是很奇怪？其实就是变量提升造成的后果。
 
-![](./images/09-10.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-10.png)
 
 在函数执行过程中，JavaScript 会优先从当前的执行上下文中查找变量，由于变量提升，当前的执行上下文中就包含了变量 myname，而值是 undefined，所以获取到的 myname 的值就是 undefined。
 
@@ -537,7 +537,7 @@ foo()
 
 **第一步是编译并创建执行上下文**，如图：
 
-![](./images/09-11.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-11.png)
 
 通过上图我们可以发现：
 
@@ -551,7 +551,7 @@ foo()
 
 接下来，**第二步继续执行代码**，当执行到代码块里面时，变量环境中 a 的值已经被设置成了 1，词法环境中 b 的值已经被设置成了 2，这时候函数的执行上下文就如下图所示：
 
-![](./images/09-12.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-12.png)
 
 其实，在词法环境内部，维护了一个**小型栈结构**，栈底是函数最外层的变量，进入一个作用域块后，就会把该作用域块内部的变量压到栈顶；当作用域执行完成之后，该作用域的信息就会从栈顶弹出，这就是词法环境的结构。需要注意下，我这里所讲的变量是指通过 let 或者 const 声明的变量。
 
@@ -561,5 +561,281 @@ foo()
 
 当作用域块执行结束之后，其内部定义的变量就会从词法环境的栈顶弹出，最终执行上下文如下图所示：
 
-![](./images/09-13.png)
+![](D:\code\blogs-github\brower\01 浏览器中的JavaScript\images\09-13.png)
+
+## 6. 变量对象与活动对象
+
+对于每个执行上下文，都有四个重要的组成部分：
+
+- 变量环境(以前也叫做变量对象)
+- 词法环境
+- 作用域链
+- this
+
+之前，我们介绍了**预编译阶段**变量环境的生成，但是比较笼统，现在来探究一下其中的细节。
+
+开始之前，有一点需要明确，就是**全局执行上下文的变量对象就是全局对象，在客户端，通常可用window引用**。
+
+在函数执行上下文中，我们用活动对象(Activation Object, AO)来表示变量对象。
+
+活动对象和变量对象其实是一个东西，只是变量对象是规范上的或者说是引擎实现上的。**不可在 JavaScript 环境中访问**，只有到当进入一个执行上下文中，这个执行上下文的变量对象才会被激活，所以才叫 Activation Object ，而只有被激活的变量对象，也就是活动对象上的各种属性才能被访问。
+
+**变量对象在预编译阶段生成，而活动对象是在进入函数上下文时被创建的**。活动对象通过函数的 arguments 属性初始化。arguments 属性值是 Arguments 对象。
+
+## 7. 作用域链与JavaScript执行代码执行流程
+
+### 7.1 作用域链
+
+当查找变量的时候，会先从当前上下文的变量对象中查找，如果没有找到，就会从父级(词法层面上的父级)执行上下文的变量对象中查找，一直找到全局上下文的变量对象，也就是全局对象。这样由多个执行上下文的变量对象构成的链表就叫做作用域链。
+
+下面，让我们以一个函数的创建和激活两个时期来讲解作用域链是如何创建和变化的。
+
+### 7.2 函数创建
+
+之前说过，函数的作用域在函数定义的时候就决定了，即词法作用域。
+
+这是因为函数有一个内部属性 [[scope]]，**函数在创建的时候就会保存所在执行上下文的作用域链(outer)到[[scope]]特性**。你可以理解此时[[scope]] 就是所有父变量对象的层级链，但是注意：[[scope]] 并不代表完整的作用域链！
+
+比如：
+
+```js
+function foo() {
+    function bar() {
+        ...
+    }
+}
+```
+
+函数创建时，各自的[[scope]]为：
+
+```lua
+foo.[[scope]] = [
+  globalContext.VO
+];
+
+bar.[[scope]] = [
+    fooContext.AO,
+    globalContext.VO
+];
+```
+
+### 7.3 函数调用
+
+函数一经调用，才会开始进行编译。编译之前会先进行预编译操作生成VO，预编译具体步骤如下：
+
+1. 把函数形参和函数中的变量声明作为VO的键，并用undefined初始化。
+2. 用函数实参的值初始化VO中的形参变量，做到形参实参相统一。
+3. 把函数声明作为键加入VO对象，用undefined初始化，如果和变量声明冲突，就替换。
+
+预编译阶段生成了函数执行上下文，接着把声明以外的代码编译为字节码(先生成AST，再进行编译)。并把函数执行上下文压入调用栈。
+
+### 7.4 函数激活
+
+当进入函数执行上下文的时候，函数激活，VO活化为AO，并将AO添加到作用域链的前端。
+
+```js
+outer = [AO].concat([[Scope]]);
+```
+
+至此，作用域链创建完毕。接着开始执行可执行代码。随着函数的执行，修改 AO 的属性值，待函数执行完毕，函数执行上下文便从调用栈中弹出。
+
+### 7.5 JavaScript执行代码流程总结
+
+以这段代码为例：
+
+```js
+var scope = "global scope";
+function checkscope(uname){
+    var scope2 = 'local scope';
+    function checksocpe1() {}
+    return scope2;
+}
+checkscope('cuifanfan');
+```
+
+首先进行词法、语法分析，进行预编译，创建全局执行上下文，生成全局对象，并将全局上下文压入调用栈。之后运行可执行代码调用`checkscope`函数。
+
+1. 函数被创建的时候，已经保存作用域链到内部属性[[scope]]。
+
+```js
+checkscope.[[scope]] = [
+    globalContext.AO
+];
+```
+
+2. 函数调用，对函数进行预编译，创建VO对象和函数执行上下文，接着对其他非声明部分进行编译，并把函数执行上下文压入调用栈。
+
+   > 创建VO步骤：(1)把函数形参和变量声明作为键，用undefined初始化  (2)实参形参相统一  (3)把内部函数声明作为键，用undefined初始化，如果和变量声明冲突，就进行替换。
+
+```js
+VO: {
+    arguments: {
+        uname: 'cuifanfan',
+        length: 1
+    },
+    scope2: undefined,
+    checkscope1: undefined
+}
+```
+
+```js
+ECStack = [
+    checkscopeContext,
+    globalContext
+];
+```
+
+3. 函数激活，进入函数执行上下文，活化AO，并将AO添加到作用域链的前端，作用域链生成完毕。
+
+```js
+checkscopeContext.outer = [AO, globalContext.AO]
+```
+
+4. 执行函数，随着函数的执行，修改 AO 的属性值。
+
+```js
+checkscopeContext: {
+  AO: {
+    arguments: {
+        uname: 'cuifanfan',
+        length: 1
+    },
+    scope2: 'local scope',
+    checkscope1: function() {}
+  },
+  outer: [AO, globalContext.AO]   
+}
+```
+
+5. 函数执行完毕，函数上下文从执行上下文栈中弹出
+
+```js
+ECStack = [
+    globalContext
+];
+```
+
+## 8. JavaScript中的this
+
+**在对象内部的方法中使用对象内部的属性是一个非常普遍的需求**。但是 JavaScript 的作用域机制并不支持这一点，基于这个需求，JavaScript 又搞出来另外一套**this 机制**。
+
+前面提到过，对于每个执行上下文，都由四个部分组成：
+
+![](./images/09-14.png)
+
+执行上下文主要分为三种——全局执行上下文、函数执行上下文和 eval 执行上下文，所以对应的 this 也只有这三种——全局执行上下文中的 this、函数中的 this 和 eval 中的 this。不过由于 eval 我们使用的不多，所以本文我们对此就不做介绍了，如果你感兴趣的话，可以自行搜索和学习相关知识。
+
+那么接下来我们就重点讲解下**全局执行上下文中的 this**和**函数执行上下文中的 this**。
+
+### 8.1 全局执行上下文中的this
+
+在控制台中输入console.log(this)来打印出来全局执行上下文中的 this，最终输出的是 window 对象。所以你可以得出这样一个结论：全局执行上下文中的 this 是指向window 对象的。这也是 this 和作用域链的唯一交点，作用域链的最底端包含了 window对象，**全局执行上下文中的 this 也是指向 window 对象**。
+
+### 8.2 函数上下文中的this
+
+先看下面这段代码：
+
+```js
+function foo() {
+ console.log(this)
+} 
+foo()
+```
+
+我们在 foo 函数内部打印出来 this 值，执行这段代码，打印出来的也是 window 对象，这说明在默认情况下调用一个函数，其执行上下文中的 this 也是指向 window 对象的。估计你会好奇，那能不能设置执行上下文中的 this 来指向其他对象呢？答案是肯定的。通常情况下，有下面三种方式来设置函数执行上下文中的 this 值。
+
+#### 8.2.1 通过函数的方法设置
+
+类似的有call、apply、bind，自行学习即可，这里不多赘述。
+
+#### 8.2.2 通过对象调用的方法设置
+
+```js
+var myObj = {
+  name: "cuifanfan",
+  showThis: function() {
+    console.log(this)
+  }
+}
+myObj.showThis()
+```
+
+执行这段代码，你可以看到，最终输出的 this 值是指向 myObj 的。所以，你可以得出这样的结论：**使用对象来调用其内部的一个方法，该方法的 this 是指向对象本身的**。
+
+所以通过以上两个例子的对比，你可以得出下面这样两个结论：**（1）在全局环境中调用一个函数，函数内部的 this 指向的是全局变量 window。（2）通过一个对象来调用其内部的一个方法，该方法的执行上下文中的 this 指向对象本身。**
+
+#### 8.2.3 通过构造函数设置
+
+```js
+function CreateObj() {
+  this.name = "cuifanfan"
+}
+var myObj = new CreateObj()
+```
+
+new的过程中其实发生了这些操作：
+
+1. 在内存中开辟一块空间创建一个新对象
+2. 把这个新对象内部的[[Prototype]]特性被赋值为构造函数的 prototype 属性(搭上原型链)
+3. this 指向新对象
+4. 执行构造函数内的代码
+5.  如果构造函数返回非空对象，则返回该对象；否则，返回刚创建的新对象
+
+简易版new如下：
+
+```js
+function objectFactory() {
+  var obj = {}
+  let Constrcutor = [].shift.call(arguments)
+  obj.__proto__ = Constrcutor.prototype
+  let result = Constrcutor.apply(obj, arguments)
+  return typeof result === 'object' ? result : obj
+}
+```
+
+### 8.3 this的缺陷和应对方案
+
+#### 8.3.1 **嵌套函数中的** this不会从外层函数中继承
+
+```js
+var myObj = {
+  name: "cuifanfan",
+  showThis: function() {
+    console.log(this)
+    function bar() {
+      console.log(this)
+    }
+    bar()
+  }
+}
+myObj.showThis()
+```
+
+这种情况可以在 showThis 函数中**声明一个变量 self 用来保存 this**，然后在 bar 函数中使用 self。
+
+```js
+var myObj = {
+  name: "simon",
+  showThis: function() {
+    console.log(this)
+    var self = this
+
+    function bar() {
+      self.name = "cuifanfan"
+    }
+    bar()
+  }
+}
+myObj.showThis()
+console.log(myObj.name)
+console.log(window.name)
+```
+
+这个方法的的本质是**把 this 体系转换为了作用域的体系**。
+
+#### 8.3.2 **普通函数中的** **this** **默认指向全局对象** window
+
+上面我们已经介绍过了，在默认情况下调用一个函数，其执行上下文中的 this 是默认指向全局对象 window 的。不过这个设计也是一种缺陷，因为在实际工作中，我们并不希望函数执行上下文中的 this默认指向全局对象，因为这样会打破数据的边界，造成一些误操作。如果要让函数执行上下文中的 this 指向某个对象，最好的方式是通过 call 方法来显示调用。
+
+最后补充一点：**箭头函数在执行时比块级作用域的内容多，比函数执行上下文的内容少，砍掉了很多函数执行上下文中的组件(比如this)，不过在箭头函数在执行时也是有变量环境的，因为还要支持变量提升**。
 
