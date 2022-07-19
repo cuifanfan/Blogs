@@ -839,3 +839,56 @@ console.log(window.name)
 
 最后补充一点：**箭头函数在执行时比块级作用域的内容多，比函数执行上下文的内容少，砍掉了很多函数执行上下文中的组件(比如this)，不过在箭头函数在执行时也是有变量环境的，因为还要支持变量提升**。
 
+## 9. 闭包
+
+### 9.1 什么是闭包
+
+```js
+function foo() {
+  var myName = "cuifanfan"
+  let test1 = 1
+  const test2 = 2
+  var innerBar = {
+    getName: function() {
+      console.log(test1)
+      return myName
+    },
+    setName: function(newName) {
+      myName = newName
+    }
+  }
+  return innerBar
+}
+var bar = foo()
+bar.setName("simon")
+bar.getName()
+console.log(bar.getName())
+```
+
+代码执行到`return innerBar`的时候，调用栈的情况为：
+
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-15.png)
+
+**根据词法作用域的规则，内部函数 getName 和 setName 总是可以访问它们的外部函数foo 中的变量**，所以当 innerBar 对象返回给全局变量 bar 时，虽然 foo 函数已经执行结束，但是 getName 和 setName 函数依然可以使用 foo 函数中的变量 myName 和test1。所以当 foo 函数执行完成之后，其整个调用栈的状态如下图所示：
+
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-16.png)
+
+foo 函数执行完成之后，其执行上下文从栈顶弹出了，但是由于返回的setName 和 getName 方法中使用了 foo 函数内部的变量 myName 和 test1，所以这两个变量依然保存在内存中。这像极了 setName 和 getName 方法背的一个专属背包，无论在哪里调用了 setName 和 getName 方法，它们都会背着这个 foo 函数的专属背包。之所以是**专属**背包，是因为除了 setName 和 getName 函数之外，其他任何地方都是无法访问该背包的，我们就可以把这个背包称为 foo 函数的**闭包**。
+
+**在 JavaScript 中，根据词法作用域的规则，内部函数总是可以访问其外部函数中声明的变量，当通过调用一个外部函数返回一个内部函数后，即使该外部函数已经执行结束了，但是内部函数引用外部函数的变量依然保存在内存中，我们就把这些变量的集合称为闭包**。
+
+JavaScript 引擎会沿着“当前执行上下文–>foo 函数闭包–> 全局执行上下文”的顺序来查找 myName 变量，你可以参考下面的调用栈状态图：
+
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-17.png)
+
+你也可以通过“开发者工具”来看看闭包的情况，打开 Chrome 的“开发者工具”，在bar 函数任意地方打上断点，然后刷新页面，可以看到如下内容：
+
+![](https://github.com/cuifanfan/Blogs/blob/master/brower/01%20%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84JavaScript/images/09-18.png)
+
+从图中可以看出来，当调用 bar.getName 的时候，右边 Scope 项就体现出了作用域链的情况：Local 就是当前的 getName 函数的作用域，Closure(foo) 是指 foo 函数的闭包，最下面的 Global 就是指全局作用域，从“Local–>Closure(foo)–>Global”就是一个完整的作用域链。
+
+### 9.2 闭包是怎么回收的
+
+通常，如果引用闭包的函数是一个全局变量，那么闭包会一直存在直到页面关闭；但如果这个闭包以后不再使用的话，就会造成内存泄漏。如果引用闭包的函数是个局部变量，等函数销毁后，在下次 JavaScript 引擎执行垃圾回收时，判断闭包这块内容如果已经不再被使用了，那么 JavaScript 引擎的垃圾回收器就会回收这块内存。
+
+**因此，如果该闭包会一直使用，那么它可以作为全局变量而存在；但如果使用频率不高，而且占用内存又比较大的话，那就尽量让它成为一个局部变量**。
